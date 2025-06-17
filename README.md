@@ -2,7 +2,7 @@
 
 This is made to read the MMDB file from https://db-ip.com/db/download/ip-to-country-lite
 
-This would allow you to geofence your server from users certain countries. Or use the IP to display a flag in the scoreboard.
+This would allow you to geofence your server from users in certain countries (whitelist and blacklist). Or use the IP to display a flag in the scoreboard.
 Each query takes about 0.0000007 seconds on my computer so it shouldn't give any issues with performance.
 I made this with the help of copilot. (As far as it was helpful which it really wasn't some times.)
 
