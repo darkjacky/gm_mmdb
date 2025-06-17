@@ -12,6 +12,32 @@ public:
 std::vector<LuaMMDB *> mmdbs;
 int mmdbs_ID = 0;
 
+LUA_FUNCTION(GetIPContinentName) {
+    LUA->CheckType(1, mmdbs_ID);
+    const char* ip = LUA->CheckString(2);
+
+    LuaMMDB* db = LUA->GetUserType<LuaMMDB>(1, mmdbs_ID);
+    int gai_error, mmdb_error;
+    MMDB_lookup_result_s result = MMDB_lookup_string(&db->mmdb, ip, &gai_error, &mmdb_error);
+
+    if (!result.found_entry) {
+        LUA->PushNil();
+        return 1;
+    }
+
+    MMDB_entry_data_s entry_data;
+    int status = MMDB_get_value(&result.entry, &entry_data, "continent", "names", "en", NULL);
+
+    if (status == MMDB_SUCCESS && entry_data.has_data && entry_data.type == MMDB_DATA_TYPE_UTF8_STRING) {
+        LUA->PushString(entry_data.utf8_string, entry_data.data_size);
+    }
+    else {
+        LUA->PushNil();
+    }
+
+    return 1;
+}
+
 LUA_FUNCTION(GetIPCountry) {
     LUA->CheckType(1, mmdbs_ID);
     const char* ip = LUA->CheckString(2);
@@ -123,6 +149,9 @@ GMOD_MODULE_OPEN() {
 
 		LUA->PushCFunction(GetIPCountryFull);
 		LUA->SetField(-2, "GetIPCountryFull");
+
+		LUA->PushCFunction(GetIPContinentName);
+		LUA->SetField(-2, "GetIPContinentName");
     }
     LUA->Pop(); // Pop metatable off stack
 
