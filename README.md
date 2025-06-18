@@ -18,3 +18,77 @@ mmdb:LookupField( IP, "continent", "code" ) is the same as mmdb:GetIPContinentco
 mmdb:LookupField( IP, "country", "iso_code" ) is the same as mmdb:GetIPCountry( IP )
 mmdb:LookupField( IP, "country", "names", "en" ) is the same as mmdb:GetIPCountryFull( IP )
 If you download the bigger database you can do mmdb:LookupField( IP, "city", "names", "en" ) to look up the city. The city often is not acurate however so it is probably best to stick with the smaller mmdb.
+
+The ip-to-country-lite has the following data:
+  continent:
+    code: OC
+    geoname_id: 6255151
+    names:
+      de: Ozeanien
+      en: Oceania
+      es: Oceanía
+      fa: اقیانوسیه
+      fr: Océanie
+      ja: オセアニア
+      ko: 오세아니아
+      pt-BR: Oceania
+      ru: Океания
+      zh-CN: 大洋洲
+  country:
+    geoname_id: 2077456
+    is_in_european_union: false
+    iso_code: AU
+    names:
+      de: Australien
+      en: Australia
+      es: Australia
+      fa: استرالیا
+      fr: Australie
+      ja: オーストラリア
+      ko: 오스트레일리아
+      pt-BR: Austrália
+      ru: Австралия
+      zh-CN: 澳大利亚
+
+
+The ip-to-city-lite has the following data:
+  city:
+    names:
+      en: Sydney
+  continent:
+    code: OC
+    geoname_id: 6255151
+    names:
+      de: Ozeanien
+      en: Oceania
+      es: Oceanía
+      fa: اقیانوسیه
+      fr: Océanie
+      ja: オセアニア
+      ko: 오세아니아
+      pt-BR: Oceania
+      ru: Океания
+      zh-CN: 大洋洲
+  country:
+    geoname_id: 2077456
+    is_in_european_union: false
+    iso_code: AU
+    names:
+      de: Australien
+      en: Australia
+      es: Australia
+      fa: استرالیا
+      fr: Australie
+      ja: オーストラリア
+      ko: 오스트레일리아
+      pt-BR: Austrália
+      ru: Австралия
+      zh-CN: 澳大利亚
+  location:
+    latitude: -33.8688
+    longitude: 151.209
+  subdivisions:
+  - names:
+      en: New South Wales
+
+You can find this with https://github.com/maxmind/mmdbinspect
