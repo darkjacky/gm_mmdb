@@ -11,3 +11,10 @@ After that create a new console application called gm_mmdb and link maxminddb.li
 This should be enough to compile it yourself.
 
 Currently there is no Close function as I don't deem it a requirement.
+
+mmdb:LookupField allows you to lookup any arbitrary field from the mmdb.
+mmdb:LookupField( IP, "continent", "names", "en" ) is the same as mmdb:GetIPContinentName( IP )
+mmdb:LookupField( IP, "continent", "code" ) is the same as mmdb:GetIPContinentcode( IP )
+mmdb:LookupField( IP, "country", "iso_code" ) is the same as mmdb:GetIPCountry( IP )
+mmdb:LookupField( IP, "country", "names", "en" ) is the same as mmdb:GetIPCountryFull( IP )
+If you download the bigger database you can do mmdb:LookupField( IP, "city", "names", "en" ) to look up the city. The city often is not acurate however so it is probably best to stick with the smaller mmdb.
