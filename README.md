@@ -24,8 +24,6 @@ To compile this yourself:
 
 That's it. You should now be able to compile the module.
 
-> **Note**: There is currently no `Close` function implemented, as it is not deemed necessary.
-
 ---
 
 ## 🧾 Usage
@@ -41,6 +39,8 @@ mmdb:GetIPCountry( IP )                          -- Same as mmdb:LookupField( IP
 mmdb:GetIPCountryFull( IP )                      -- Same as mmdb:LookupField( IP, "country", "names", "en" )
 mmdb:LookupField( IP, "city", "names", "en" )    -- Requires the bigger MMDB; city accuracy usually not very good.
 mmdb:GetAllFields( IP )                          -- Significantly slower 4 microseconds per call but this contains all data available for this IP.
+mmdb:GetIPCoordinates( IP )                      -- Only for City to IP mmdb's. Returns the rough location as 2 doubles. (It won't be the exact location.)
+mmdb:GetIPCityName( IP )                         -- Only for City to IP mmdb's. Returns the city name. (It might not be the correct one.)
 ```
 
 ---
