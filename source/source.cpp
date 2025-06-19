@@ -12,7 +12,108 @@ public:
 std::vector<LuaMMDB *> mmdbs;
 int mmdbs_ID = 0;
 
-std::string extractIP(const std::string& ipPort) {
+static void PushEntryDataListToLua(GarrysMod::Lua::ILuaBase* LUA, MMDB_entry_data_list_s** entry_data_list) {
+    MMDB_entry_data_list_s* current = *entry_data_list;
+
+    if (!current) return;
+
+    switch (current->entry_data.type) {
+    case MMDB_DATA_TYPE_MAP: {
+        uint32_t size = current->entry_data.data_size;
+        LUA->CreateTable();
+        current = current->next;
+
+        for (uint32_t i = 0; i < size; i++) {
+            if (!current || current->entry_data.type != MMDB_DATA_TYPE_UTF8_STRING) break;
+
+            // Key
+            LUA->PushString(current->entry_data.utf8_string, current->entry_data.data_size);
+            current = current->next;
+
+            // Value (recurse)
+            PushEntryDataListToLua(LUA, &current);
+
+            // table[key] = value
+            LUA->RawSet(-3);
+        }
+
+        *entry_data_list = current;
+        break;
+    }
+
+    case MMDB_DATA_TYPE_ARRAY: {
+        uint32_t size = current->entry_data.data_size;
+        LUA->CreateTable();
+        current = current->next;
+
+        for (uint32_t i = 0; i < size; i++) {
+            // Value
+            LUA->PushNumber(i + 1);
+            PushEntryDataListToLua(LUA, &current);
+            LUA->RawSet(-3);
+        }
+
+        *entry_data_list = current;
+        break;
+    }
+
+    case MMDB_DATA_TYPE_UTF8_STRING:
+        LUA->PushString(current->entry_data.utf8_string, current->entry_data.data_size);
+        current = current->next;
+        *entry_data_list = current;
+        break;
+
+    case MMDB_DATA_TYPE_BOOLEAN:
+        LUA->PushBool(current->entry_data.boolean);
+        current = current->next;
+        *entry_data_list = current;
+        break;
+
+    case MMDB_DATA_TYPE_DOUBLE:
+        LUA->PushNumber(current->entry_data.double_value);
+        current = current->next;
+        *entry_data_list = current;
+        break;
+
+    case MMDB_DATA_TYPE_FLOAT:
+        LUA->PushNumber(current->entry_data.float_value);
+        current = current->next;
+        *entry_data_list = current;
+        break;
+
+    case MMDB_DATA_TYPE_UINT16:
+        LUA->PushNumber(current->entry_data.uint16);
+        current = current->next;
+        *entry_data_list = current;
+        break;
+
+    case MMDB_DATA_TYPE_UINT32:
+        LUA->PushNumber(current->entry_data.uint32);
+        current = current->next;
+        *entry_data_list = current;
+        break;
+
+    case MMDB_DATA_TYPE_UINT64:
+        LUA->PushNumber(static_cast<double>(current->entry_data.uint64));
+        current = current->next;
+        *entry_data_list = current;
+        break;
+
+    case MMDB_DATA_TYPE_INT32:
+        LUA->PushNumber(current->entry_data.int32);
+        current = current->next;
+        *entry_data_list = current;
+        break;
+
+    default:
+        LUA->PushNil();
+        current = current->next;
+        *entry_data_list = current;
+        break;
+    }
+}
+
+static std::string extractIP(const std::string& ipPort) {
     size_t colonPos = ipPort.find(':');
     if (colonPos == std::string::npos) {
         // No colon found, return the whole string or empty
@@ -21,7 +122,33 @@ std::string extractIP(const std::string& ipPort) {
     return ipPort.substr(0, colonPos);
 }
 
-LUA_FUNCTION(LookupMMDBField) {
+static LUA_FUNCTION(GetAllFields) {
+    LUA->CheckType(1, mmdbs_ID); // Your MMDB userdata
+    LuaMMDB* db = LUA->GetUserType<LuaMMDB>(1, mmdbs_ID);
+
+    auto SIP = extractIP(LUA->GetString(2));
+    const char* ip = SIP.c_str();
+
+    int gai_error, mmdb_error;
+    MMDB_lookup_result_s result = MMDB_lookup_string(&db->mmdb, ip, &gai_error, &mmdb_error);
+
+    if (!result.found_entry) {
+        LUA->PushNil();
+        return 1;
+    }
+
+    MMDB_entry_data_list_s* list = nullptr;
+    if (MMDB_get_entry_data_list(&result.entry, &list) != MMDB_SUCCESS || !list) {
+        LUA->PushNil();
+        return 1;
+    }
+
+    PushEntryDataListToLua(LUA, &list);
+    MMDB_free_entry_data_list(list);
+    return 1;
+}
+
+static LUA_FUNCTION(LookupMMDBField) {
     LUA->CheckType(1, mmdbs_ID); // Your MMDB userdata
     LuaMMDB* db = LUA->GetUserType<LuaMMDB>(1, mmdbs_ID);
 
@@ -96,7 +223,7 @@ LUA_FUNCTION(LookupMMDBField) {
     return 1;
 }
 
-LUA_FUNCTION(GetIPContinentName) {
+static LUA_FUNCTION(GetIPContinentName) {
     LUA->CheckType(1, mmdbs_ID);
     auto SIP = extractIP(LUA->GetString(2));
     const char* ip = SIP.c_str();
@@ -123,7 +250,7 @@ LUA_FUNCTION(GetIPContinentName) {
     return 1;
 }
 
-LUA_FUNCTION(GetIPContinentcode) {
+static LUA_FUNCTION(GetIPContinentcode) {
     LUA->CheckType(1, mmdbs_ID);
     auto SIP = extractIP(LUA->GetString(2));
     const char* ip = SIP.c_str();
@@ -150,7 +277,7 @@ LUA_FUNCTION(GetIPContinentcode) {
     return 1;
 }
 
-LUA_FUNCTION(GetIPCountry) {
+static LUA_FUNCTION(GetIPCountry) {
     LUA->CheckType(1, mmdbs_ID);
     auto SIP = extractIP(LUA->GetString(2));
     const char* ip = SIP.c_str();
@@ -176,7 +303,7 @@ LUA_FUNCTION(GetIPCountry) {
     return 1;
 }
 
-LUA_FUNCTION(GetIPCountryFull) {
+static LUA_FUNCTION(GetIPCountryFull) {
     LUA->CheckType(1, mmdbs_ID);
     auto SIP = extractIP(LUA->GetString(2));
     const char* ip = SIP.c_str();
@@ -202,7 +329,7 @@ LUA_FUNCTION(GetIPCountryFull) {
     return 1;
 }
 
-LUA_FUNCTION(ToStringMMDB) {
+static LUA_FUNCTION(ToStringMMDB) {
 	LUA->CheckType(1, mmdbs_ID);
 	LuaMMDB* db = LUA->GetUserType<LuaMMDB>(1, mmdbs_ID);
 	if (db) {
@@ -214,7 +341,7 @@ LUA_FUNCTION(ToStringMMDB) {
 	return 1;
 }
 
-LUA_FUNCTION(OpenMMDB) {
+static LUA_FUNCTION(OpenMMDB) {
 	const char* db_path = LUA->CheckString(1);
 
 	for (auto& db : mmdbs) {
@@ -272,6 +399,9 @@ GMOD_MODULE_OPEN() {
 
         LUA->PushCFunction(LookupMMDBField);
 		LUA->SetField(-2, "LookupField");
+
+        LUA->PushCFunction(GetAllFields);
+		LUA->SetField(-2, "GetAllFields");
     }
     LUA->Pop(); // Pop metatable off stack
 

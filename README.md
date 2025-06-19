@@ -40,6 +40,7 @@ mmdb:GetIPContinentCode( IP )                    -- Same as mmdb:LookupField( IP
 mmdb:GetIPCountry( IP )                          -- Same as mmdb:LookupField( IP, "country", "iso_code" )
 mmdb:GetIPCountryFull( IP )                      -- Same as mmdb:LookupField( IP, "country", "names", "en" )
 mmdb:LookupField( IP, "city", "names", "en" )    -- Requires the bigger MMDB; city accuracy usually not very good.
+mmdb:GetAllFields( IP )                          -- Significantly slower 4 microseconds per call but this contains all data available for this IP.
 ```
 
 ---
@@ -50,81 +51,84 @@ mmdb:LookupField( IP, "city", "names", "en" )    -- Requires the bigger MMDB; ci
 
 Example data:
 
-```yaml
-continent:
-  code: OC
-  geoname_id: 6255151
-  names:
-    de: Ozeanien
-    en: Oceania
-    es: Oceanía
-    fa: اقیانوسیه
-    fr: Océanie
-    ja: オセアニア
-    ko: 오세아니아
-    pt-BR: Oceania
-    ru: Океания
-    zh-CN: 大洋洲
-country:
-  geoname_id: 2077456
-  is_in_european_union: false
-  iso_code: AU
-  names:
-    de: Australien
-    en: Australia
-    es: Australia
-    fa: استرالیا
-    fr: Australie
-    ja: オーストラリア
-    ko: 오스트레일리아
-    pt-BR: Austrália
-    ru: Австралия
-    zh-CN: 澳大利亚
+```
+PrintTable(mmdb:GetAllFields("1.1.1.1"))
+["continent"]:
+                ["code"]        =       OC
+                ["geoname_id"]  =       6255151
+                ["names"]:
+                                ["de"]  =       Ozeanien
+                                ["en"]  =       Oceania
+                                ["es"]  =       Oceanía
+                                ["fa"]  =       اقیانوسیه
+                                ["fr"]  =       Océanie
+                                ["ja"]  =       オセアニア
+                                ["ko"]  =       오세아니아
+                                ["pt-BR"]       =       Oceania
+                                ["ru"]  =       Океания
+                                ["zh-CN"]       =       大洋洲
+["country"]:
+                ["geoname_id"]  =       2077456
+                ["is_in_european_union"]        =       false
+                ["iso_code"]    =       AU
+                ["names"]:
+                                ["de"]  =       Australien
+                                ["en"]  =       Australia
+                                ["es"]  =       Australia
+                                ["fa"]  =       استرالیا
+                                ["fr"]  =       Australie
+                                ["ja"]  =       オーストラリア
+                                ["ko"]  =       오스트레일리아
+                                ["pt-BR"]       =       Austrália
+                                ["ru"]  =       Австралия
+                                ["zh-CN"]       =       澳大利亚
 ```
 
 ### ip-to-city-lite
 
 Example data:
 
-```yaml
-city:
-  names:
-    en: Sydney
-continent:
-  code: OC
-  geoname_id: 6255151
-  names:
-    de: Ozeanien
-    en: Oceania
-    es: Oceanía
-    fa: اقیانوسیه
-    fr: Océanie
-    ja: オセアニア
-    ko: 오세아니아
-    pt-BR: Oceania
-    ru: Океания
-    zh-CN: 大洋洲
-country:
-  geoname_id: 2077456
-  is_in_european_union: false
-  iso_code: AU
-  names:
-    de: Australien
-    en: Australia
-    es: Australia
-    fa: استرالیا
-    fr: Australie
-    ja: オーストラリア
-    ko: 오스트레일리아
-    pt-BR: Austrália
-    ru: Австралия
-    zh-CN: 澳大利亚
-location:
-  latitude: -33.8688
-  longitude: 151.209
-subdivisions:
-  - names:
-      en: New South Wales
+```
+PrintTable(mmdb:GetAllFields("1.1.1.1"))
+["city"]:
+                ["names"]:
+                                ["en"]  =       Sydney
+["continent"]:
+                ["code"]        =       OC
+                ["geoname_id"]  =       6255151
+                ["names"]:
+                                ["de"]  =       Ozeanien
+                                ["en"]  =       Oceania
+                                ["es"]  =       Oceanía
+                                ["fa"]  =       اقیانوسیه
+                                ["fr"]  =       Océanie
+                                ["ja"]  =       オセアニア
+                                ["ko"]  =       오세아니아
+                                ["pt-BR"]       =       Oceania
+                                ["ru"]  =       Океания
+                                ["zh-CN"]       =       大洋洲
+["country"]:
+                ["geoname_id"]  =       2077456
+                ["is_in_european_union"]        =       false
+                ["iso_code"]    =       AU
+                ["names"]:
+                                ["de"]  =       Australien
+                                ["en"]  =       Australia
+                                ["es"]  =       Australia
+                                ["fa"]  =       استرالیا
+                                ["fr"]  =       Australie
+                                ["ja"]  =       オーストラリア
+                                ["ko"]  =       오스트레일리아
+                                ["pt-BR"]       =       Austrália
+                                ["ru"]  =       Австралия
+                                ["zh-CN"]       =       澳大利亚
+["location"]:
+                ["latitude"]    =       -33.8688
+                ["longitude"]   =       151.209
+["subdivisions"]:
+                [1]:
+                                ["names"]:
+                                                ["en"]  =       New South Wales
 ```
 
 ---
