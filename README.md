@@ -30,10 +30,6 @@ That's it. You should now be able to compile the module.
 
 ## 🧾 Usage
 
-### LookupField
-
-You can query any field in the MMDB using `mmdb:LookupField`:
-
 ```lua
 mmdb:GetIPContinentName( IP )                    -- Same as mmdb:LookupField( IP, "continent", "names", "en" )
 mmdb:GetIPContinentCode( IP )                    -- Same as mmdb:LookupField( IP, "continent", "code" )
@@ -42,6 +38,7 @@ mmdb:GetIPCountryFull( IP )                      -- Same as mmdb:LookupField( IP
 mmdb:LookupField( IP, "city", "names", "en" )    -- Requires the bigger MMDB; city accuracy usually not very good.
 mmdb:GetAllFields( IP )                          -- Significantly slower 4 microseconds per call but this contains all data available for this IP.
 ```
+There is an example file and you can find more examples here [Garry's Mod IP Filter](https://github.com/darkjacky/Garry-s-Mod-IP-Filter)
 
 ---
 
@@ -130,12 +127,6 @@ PrintTable(mmdb:GetAllFields("1.1.1.1"))
                                 ["names"]:
                                                 ["en"]  =       New South Wales
 ```
-
----
-
-## 🔍 Tooling
-
-To inspect MMDBs, use [mmdbinspect](https://github.com/maxmind/mmdbinspect).
 
 ## 🧠 Note on Development
 
